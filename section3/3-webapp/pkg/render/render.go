@@ -1,28 +1,48 @@
 package render
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 	"path/filepath"
 	"text/template"
+
+	"github.com/ahmed-bahaa/thirdwebapp/pkg/config"
 )
 
 var functions = template.FuncMap{}
+var conf *config.AppConfig
+
+func NewTemplate(app *config.AppConfig) {
+	conf = app
+}
 
 func RenderTemplate(w http.ResponseWriter, tmp string) {
-	_, err := renderTemplateTest(w)
-	if err != nil {
-		log.Println("Error when we calling render test function", err)
+
+	var tc map[string]*template.Template
+
+	if conf.UseCache {
+		tc = conf.CachedTemplate
+	} else {
+		tc, _ = CreateTemplateCach()
 	}
-	parsedTemp, _ := template.ParseFiles("./templates/" + tmp)
-	err = parsedTemp.Execute(w, nil)
+
+	t, ok := tc[tmp]
+	if !ok {
+		log.Fatal("Couldn't find the template")
+	}
+
+	buf := new(bytes.Buffer)
+
+	_ = t.Execute(buf, nil)
+
+	_, err := buf.WriteTo(w)
 	if err != nil {
-		log.Println("err with parsing the template")
-		return
+		log.Println("Error when writting to the writter", err)
 	}
 }
 
-func renderTemplateTest(w http.ResponseWriter) (map[string]*template.Template, error) {
+func CreateTemplateCach() (map[string]*template.Template, error) {
 
 	myCach := map[string]*template.Template{}
 
