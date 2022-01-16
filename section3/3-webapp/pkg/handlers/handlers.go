@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ahmed-bahaa/thirdwebapp/pkg/config"
+	"github.com/ahmed-bahaa/thirdwebapp/pkg/models"
 	"github.com/ahmed-bahaa/thirdwebapp/pkg/render"
 )
 
@@ -28,11 +29,16 @@ func NewHandlers(r *Repository) {
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	// _, err := fmt.Fprintf(w, "Hello, Gopher Boy!")
-	render.RenderTemplate(w, "home.page.tmpl")
+	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
 }
 
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	// _, err := fmt.Fprintf(w, fmt.Sprintf("We are Egyptian Gophers, ready to GO! Today is : %s", getToday()))
-	render.RenderTemplate(w, "about.page.tmpl")
+	myMessage := make(map[string]string)
+	myMessage["AboutMessage"] = "Temp hello! :)"
+
+	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{
+		StringMap: myMessage,
+	})
 
 }

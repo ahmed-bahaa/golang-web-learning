@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/ahmed-bahaa/thirdwebapp/pkg/config"
+	"github.com/ahmed-bahaa/thirdwebapp/pkg/models"
 )
 
 var functions = template.FuncMap{}
@@ -17,7 +18,7 @@ func NewTemplate(app *config.AppConfig) {
 	conf = app
 }
 
-func RenderTemplate(w http.ResponseWriter, tmp string) {
+func RenderTemplate(w http.ResponseWriter, tmp string, td *models.TemplateData) {
 
 	var tc map[string]*template.Template
 
@@ -34,7 +35,7 @@ func RenderTemplate(w http.ResponseWriter, tmp string) {
 
 	buf := new(bytes.Buffer)
 
-	_ = t.Execute(buf, nil)
+	_ = t.Execute(buf, td)
 
 	_, err := buf.WriteTo(w)
 	if err != nil {
