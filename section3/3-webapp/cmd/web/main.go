@@ -29,12 +29,23 @@ func main() {
 	appConf.CachedTemplate = tc
 	appConf.UseCache = false
 
+	repo := handlers.NewRepo(&appConf)
+	handlers.NewHandlers(repo)
+
 	render.NewTemplate(&appConf)
 
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
+	// http.HandleFunc("/", handlers.Repo.Home)
+	// http.HandleFunc("/about", handlers.Repo.About)
 
 	log.Println("Starting server on port:", portNumber)
-	_ = http.ListenAndServe(portNumber, nil)
+	// _ = http.ListenAndServe(portNumber, nil)
+
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&appConf),
+	}
+
+	err = srv.ListenAndServe()
+	log.Fatal(err)
 
 }
