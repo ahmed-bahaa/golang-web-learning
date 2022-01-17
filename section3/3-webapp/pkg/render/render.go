@@ -55,7 +55,6 @@ func CreateTemplateCach() (map[string]*template.Template, error) {
 
 	for _, page := range pages {
 		name := filepath.Base(page)
-		log.Println("we are working on: ", name)
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			log.Println("Error while creating new templates", err)
